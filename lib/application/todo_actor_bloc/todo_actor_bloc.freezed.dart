@@ -774,8 +774,8 @@ mixin _$TodoActorState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() actionInProgress,
-    required TResult Function(List<Todo> todos) actionSuccess,
-    required TResult Function(List<Todo> todos) deleteSuccess,
+    required TResult Function() actionSuccess,
+    required TResult Function() deleteSuccess,
     required TResult Function(String message) actionFailure,
   }) =>
       throw _privateConstructorUsedError;
@@ -783,8 +783,8 @@ mixin _$TodoActorState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? actionInProgress,
-    TResult? Function(List<Todo> todos)? actionSuccess,
-    TResult? Function(List<Todo> todos)? deleteSuccess,
+    TResult? Function()? actionSuccess,
+    TResult? Function()? deleteSuccess,
     TResult? Function(String message)? actionFailure,
   }) =>
       throw _privateConstructorUsedError;
@@ -792,8 +792,8 @@ mixin _$TodoActorState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? actionInProgress,
-    TResult Function(List<Todo> todos)? actionSuccess,
-    TResult Function(List<Todo> todos)? deleteSuccess,
+    TResult Function()? actionSuccess,
+    TResult Function()? deleteSuccess,
     TResult Function(String message)? actionFailure,
     required TResult orElse(),
   }) =>
@@ -885,8 +885,8 @@ class _$_Initial implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() actionInProgress,
-    required TResult Function(List<Todo> todos) actionSuccess,
-    required TResult Function(List<Todo> todos) deleteSuccess,
+    required TResult Function() actionSuccess,
+    required TResult Function() deleteSuccess,
     required TResult Function(String message) actionFailure,
   }) {
     return initial();
@@ -897,8 +897,8 @@ class _$_Initial implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? actionInProgress,
-    TResult? Function(List<Todo> todos)? actionSuccess,
-    TResult? Function(List<Todo> todos)? deleteSuccess,
+    TResult? Function()? actionSuccess,
+    TResult? Function()? deleteSuccess,
     TResult? Function(String message)? actionFailure,
   }) {
     return initial?.call();
@@ -909,8 +909,8 @@ class _$_Initial implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? actionInProgress,
-    TResult Function(List<Todo> todos)? actionSuccess,
-    TResult Function(List<Todo> todos)? deleteSuccess,
+    TResult Function()? actionSuccess,
+    TResult Function()? deleteSuccess,
     TResult Function(String message)? actionFailure,
     required TResult orElse(),
   }) {
@@ -1005,8 +1005,8 @@ class _$_LoadInProgress implements _LoadInProgress {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() actionInProgress,
-    required TResult Function(List<Todo> todos) actionSuccess,
-    required TResult Function(List<Todo> todos) deleteSuccess,
+    required TResult Function() actionSuccess,
+    required TResult Function() deleteSuccess,
     required TResult Function(String message) actionFailure,
   }) {
     return actionInProgress();
@@ -1017,8 +1017,8 @@ class _$_LoadInProgress implements _LoadInProgress {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? actionInProgress,
-    TResult? Function(List<Todo> todos)? actionSuccess,
-    TResult? Function(List<Todo> todos)? deleteSuccess,
+    TResult? Function()? actionSuccess,
+    TResult? Function()? deleteSuccess,
     TResult? Function(String message)? actionFailure,
   }) {
     return actionInProgress?.call();
@@ -1029,8 +1029,8 @@ class _$_LoadInProgress implements _LoadInProgress {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? actionInProgress,
-    TResult Function(List<Todo> todos)? actionSuccess,
-    TResult Function(List<Todo> todos)? deleteSuccess,
+    TResult Function()? actionSuccess,
+    TResult Function()? deleteSuccess,
     TResult Function(String message)? actionFailure,
     required TResult orElse(),
   }) {
@@ -1090,8 +1090,6 @@ abstract class _$$_LoadSuccessCopyWith<$Res> {
   factory _$$_LoadSuccessCopyWith(
           _$_LoadSuccess value, $Res Function(_$_LoadSuccess) then) =
       __$$_LoadSuccessCopyWithImpl<$Res>;
-  @useResult
-  $Res call({List<Todo> todos});
 }
 
 /// @nodoc
@@ -1101,66 +1099,37 @@ class __$$_LoadSuccessCopyWithImpl<$Res>
   __$$_LoadSuccessCopyWithImpl(
       _$_LoadSuccess _value, $Res Function(_$_LoadSuccess) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? todos = null,
-  }) {
-    return _then(_$_LoadSuccess(
-      null == todos
-          ? _value._todos
-          : todos // ignore: cast_nullable_to_non_nullable
-              as List<Todo>,
-    ));
-  }
 }
 
 /// @nodoc
 
 class _$_LoadSuccess implements _LoadSuccess {
-  const _$_LoadSuccess(final List<Todo> todos) : _todos = todos;
-
-  final List<Todo> _todos;
-  @override
-  List<Todo> get todos {
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_todos);
-  }
+  const _$_LoadSuccess();
 
   @override
   String toString() {
-    return 'TodoActorState.actionSuccess(todos: $todos)';
+    return 'TodoActorState.actionSuccess()';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_LoadSuccess &&
-            const DeepCollectionEquality().equals(other._todos, _todos));
+        (other.runtimeType == runtimeType && other is _$_LoadSuccess);
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_todos));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_LoadSuccessCopyWith<_$_LoadSuccess> get copyWith =>
-      __$$_LoadSuccessCopyWithImpl<_$_LoadSuccess>(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() actionInProgress,
-    required TResult Function(List<Todo> todos) actionSuccess,
-    required TResult Function(List<Todo> todos) deleteSuccess,
+    required TResult Function() actionSuccess,
+    required TResult Function() deleteSuccess,
     required TResult Function(String message) actionFailure,
   }) {
-    return actionSuccess(todos);
+    return actionSuccess();
   }
 
   @override
@@ -1168,11 +1137,11 @@ class _$_LoadSuccess implements _LoadSuccess {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? actionInProgress,
-    TResult? Function(List<Todo> todos)? actionSuccess,
-    TResult? Function(List<Todo> todos)? deleteSuccess,
+    TResult? Function()? actionSuccess,
+    TResult? Function()? deleteSuccess,
     TResult? Function(String message)? actionFailure,
   }) {
-    return actionSuccess?.call(todos);
+    return actionSuccess?.call();
   }
 
   @override
@@ -1180,13 +1149,13 @@ class _$_LoadSuccess implements _LoadSuccess {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? actionInProgress,
-    TResult Function(List<Todo> todos)? actionSuccess,
-    TResult Function(List<Todo> todos)? deleteSuccess,
+    TResult Function()? actionSuccess,
+    TResult Function()? deleteSuccess,
     TResult Function(String message)? actionFailure,
     required TResult orElse(),
   }) {
     if (actionSuccess != null) {
-      return actionSuccess(todos);
+      return actionSuccess();
     }
     return orElse();
   }
@@ -1233,12 +1202,7 @@ class _$_LoadSuccess implements _LoadSuccess {
 }
 
 abstract class _LoadSuccess implements TodoActorState {
-  const factory _LoadSuccess(final List<Todo> todos) = _$_LoadSuccess;
-
-  List<Todo> get todos;
-  @JsonKey(ignore: true)
-  _$$_LoadSuccessCopyWith<_$_LoadSuccess> get copyWith =>
-      throw _privateConstructorUsedError;
+  const factory _LoadSuccess() = _$_LoadSuccess;
 }
 
 /// @nodoc
@@ -1246,8 +1210,6 @@ abstract class _$$_DeleteSuccessCopyWith<$Res> {
   factory _$$_DeleteSuccessCopyWith(
           _$_DeleteSuccess value, $Res Function(_$_DeleteSuccess) then) =
       __$$_DeleteSuccessCopyWithImpl<$Res>;
-  @useResult
-  $Res call({List<Todo> todos});
 }
 
 /// @nodoc
@@ -1257,66 +1219,37 @@ class __$$_DeleteSuccessCopyWithImpl<$Res>
   __$$_DeleteSuccessCopyWithImpl(
       _$_DeleteSuccess _value, $Res Function(_$_DeleteSuccess) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? todos = null,
-  }) {
-    return _then(_$_DeleteSuccess(
-      null == todos
-          ? _value._todos
-          : todos // ignore: cast_nullable_to_non_nullable
-              as List<Todo>,
-    ));
-  }
 }
 
 /// @nodoc
 
 class _$_DeleteSuccess implements _DeleteSuccess {
-  const _$_DeleteSuccess(final List<Todo> todos) : _todos = todos;
-
-  final List<Todo> _todos;
-  @override
-  List<Todo> get todos {
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_todos);
-  }
+  const _$_DeleteSuccess();
 
   @override
   String toString() {
-    return 'TodoActorState.deleteSuccess(todos: $todos)';
+    return 'TodoActorState.deleteSuccess()';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_DeleteSuccess &&
-            const DeepCollectionEquality().equals(other._todos, _todos));
+        (other.runtimeType == runtimeType && other is _$_DeleteSuccess);
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_todos));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_DeleteSuccessCopyWith<_$_DeleteSuccess> get copyWith =>
-      __$$_DeleteSuccessCopyWithImpl<_$_DeleteSuccess>(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() actionInProgress,
-    required TResult Function(List<Todo> todos) actionSuccess,
-    required TResult Function(List<Todo> todos) deleteSuccess,
+    required TResult Function() actionSuccess,
+    required TResult Function() deleteSuccess,
     required TResult Function(String message) actionFailure,
   }) {
-    return deleteSuccess(todos);
+    return deleteSuccess();
   }
 
   @override
@@ -1324,11 +1257,11 @@ class _$_DeleteSuccess implements _DeleteSuccess {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? actionInProgress,
-    TResult? Function(List<Todo> todos)? actionSuccess,
-    TResult? Function(List<Todo> todos)? deleteSuccess,
+    TResult? Function()? actionSuccess,
+    TResult? Function()? deleteSuccess,
     TResult? Function(String message)? actionFailure,
   }) {
-    return deleteSuccess?.call(todos);
+    return deleteSuccess?.call();
   }
 
   @override
@@ -1336,13 +1269,13 @@ class _$_DeleteSuccess implements _DeleteSuccess {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? actionInProgress,
-    TResult Function(List<Todo> todos)? actionSuccess,
-    TResult Function(List<Todo> todos)? deleteSuccess,
+    TResult Function()? actionSuccess,
+    TResult Function()? deleteSuccess,
     TResult Function(String message)? actionFailure,
     required TResult orElse(),
   }) {
     if (deleteSuccess != null) {
-      return deleteSuccess(todos);
+      return deleteSuccess();
     }
     return orElse();
   }
@@ -1389,12 +1322,7 @@ class _$_DeleteSuccess implements _DeleteSuccess {
 }
 
 abstract class _DeleteSuccess implements TodoActorState {
-  const factory _DeleteSuccess(final List<Todo> todos) = _$_DeleteSuccess;
-
-  List<Todo> get todos;
-  @JsonKey(ignore: true)
-  _$$_DeleteSuccessCopyWith<_$_DeleteSuccess> get copyWith =>
-      throw _privateConstructorUsedError;
+  const factory _DeleteSuccess() = _$_DeleteSuccess;
 }
 
 /// @nodoc
@@ -1463,8 +1391,8 @@ class _$_LoadFailure implements _LoadFailure {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() actionInProgress,
-    required TResult Function(List<Todo> todos) actionSuccess,
-    required TResult Function(List<Todo> todos) deleteSuccess,
+    required TResult Function() actionSuccess,
+    required TResult Function() deleteSuccess,
     required TResult Function(String message) actionFailure,
   }) {
     return actionFailure(message);
@@ -1475,8 +1403,8 @@ class _$_LoadFailure implements _LoadFailure {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? actionInProgress,
-    TResult? Function(List<Todo> todos)? actionSuccess,
-    TResult? Function(List<Todo> todos)? deleteSuccess,
+    TResult? Function()? actionSuccess,
+    TResult? Function()? deleteSuccess,
     TResult? Function(String message)? actionFailure,
   }) {
     return actionFailure?.call(message);
@@ -1487,8 +1415,8 @@ class _$_LoadFailure implements _LoadFailure {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? actionInProgress,
-    TResult Function(List<Todo> todos)? actionSuccess,
-    TResult Function(List<Todo> todos)? deleteSuccess,
+    TResult Function()? actionSuccess,
+    TResult Function()? deleteSuccess,
     TResult Function(String message)? actionFailure,
     required TResult orElse(),
   }) {

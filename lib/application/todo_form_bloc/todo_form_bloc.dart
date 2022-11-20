@@ -46,8 +46,7 @@ class TodoFormBloc extends Bloc<TodoFormEvent, TodoFormState> {
 
         emit(state.copyWith(
           isSaving: true,
-          saveErrorMessageOrUpdatedTodosOption:
-              optionOf(right(_todoRepository.getTodos())),
+          saveErrorMessageOrUpdatedTodosOption: optionOf(right(unit)),
         ));
       } catch (e) {
         emit(state.copyWith(

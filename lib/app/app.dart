@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todos_bloc_example/application/todo_actor_bloc/todo_actor_bloc.dart';
-import 'package:todos_bloc_example/application/todo_reader_bloc/todo_reader_bloc.dart';
+import 'package:todos_bloc_example/application/todo_watcher_bloc/todo_watcher_bloc.dart';
 import 'package:todos_bloc_example/infra/todo_repository.dart';
 import 'package:todos_bloc_example/l10n/l10n.dart';
 import 'package:todos_bloc_example/presentation/home_page.dart';
@@ -32,10 +32,10 @@ class AppView extends StatelessWidget {
           create: (context) =>
               TodoActorBloc(todoRepository: context.read<TodoRepository>()),
         ),
-        BlocProvider<TodoReaderBloc>(
+        BlocProvider<TodoWatcherBloc>(
           create: (context) =>
-              TodoReaderBloc(todosRepository: context.read<TodoRepository>())
-                ..add(const TodoReaderEvent.todoRequested()),
+              TodoWatcherBloc(todoRepository: context.read<TodoRepository>())
+                ..add(const TodoWatcherEvent.started()),
         )
       ],
       child: MaterialApp(

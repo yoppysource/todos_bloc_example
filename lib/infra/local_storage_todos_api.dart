@@ -1,11 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:todos_bloc_example/models/todo.dart';
+import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todos_bloc_example/models/todo.dart';
 
-class TodoRepository {
-  TodoRepository({
+class LocalStorageTodosApi {
+  LocalStorageTodosApi({
     required SharedPreferences plugin,
   }) : _plugin = plugin {
     _init();
@@ -13,12 +15,16 @@ class TodoRepository {
 
   final SharedPreferences _plugin;
 
-  // seeded for initial value
   final _todoStreamController = BehaviorSubject<List<Todo>>.seeded(const []);
+
+  /// The key used for storing the todos locally.
+  ///
+  /// This is only exposed for testing and shouldn't be used by consumers of
+  /// this library.
+  @visibleForTesting
   static const kTodosCollectionKey = '__todos_collection_key__';
 
   String? _getValue(String key) => _plugin.getString(key);
-
   Future<void> _setValue(String key, String value) =>
       _plugin.setString(key, value);
 

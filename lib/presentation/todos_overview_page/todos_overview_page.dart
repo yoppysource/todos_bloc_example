@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todos_bloc_example/application/todo_actor_bloc/todo_actor_bloc.dart';
-import 'package:todos_bloc_example/application/todo_reader_bloc/todo_reader_bloc.dart';
+import 'package:todos_bloc_example/application/todo_watcher_bloc/todo_watcher_bloc.dart';
 import 'package:todos_bloc_example/presentation/edit_todo_page.dart';
 import 'package:todos_bloc_example/l10n/l10n.dart';
 import 'package:todos_bloc_example/presentation/todos_overview_page/widgets/todo_list_tile.dart';
@@ -35,24 +35,21 @@ class TodosOverviewView extends StatelessWidget {
       ),
       body: MultiBlocListener(
         listeners: [
-          BlocListener<TodoReaderBloc, TodoReaderState>(
+          BlocListener<TodoWatcherBloc, TodoWatcherState>(
             listener: (context, state) {
-              state.maybeMap(
+              state.mapOrNull(
                   loadFailure: (state) => ScaffoldMessenger.of(context)
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
                       SnackBar(
                         content: Text(l10n.todosOverviewErrorSnackbarText),
                       ),
-                    ),
-                  orElse: () => null);
+                    ));
             },
           ),
           BlocListener<TodoActorBloc, TodoActorState>(
-            listenWhen: (previous, current) => current.maybeMap(
-              deleteSuccess: (_) => true,
-              orElse: () => false,
-            ),
+            listenWhen: (previous, current) =>
+                current.mapOrNull(deleteSuccess: (_) => true) ?? false,
             listener: (context, state) {
               final deletedTodo = context.read<TodoActorBloc>().lastDeleted!;
               final messenger = ScaffoldMessenger.of(context);
@@ -79,7 +76,7 @@ class TodosOverviewView extends StatelessWidget {
             },
           ),
         ],
-        child: BlocBuilder<TodoReaderBloc, TodoReaderState>(
+        child: BlocBuilder<TodoWatcherBloc, TodoWatcherState>(
           builder: (context, state) => state.maybeMap(
             loadSuccess: (state) => CupertinoScrollbar(
               child: state.todos.isEmpty

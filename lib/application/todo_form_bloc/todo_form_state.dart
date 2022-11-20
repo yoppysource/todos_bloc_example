@@ -8,8 +8,7 @@ class TodoFormState with _$TodoFormState {
     required bool isSaving,
     required String title,
     required String description,
-    required Option<Either<String, List<Todo>>>
-        saveErrorMessageOrUpdatedTodosOption,
+    required Option<Either<String, Unit>> saveErrorMessageOrUpdatedTodosOption,
   }) = _TodoFormState;
 
   factory TodoFormState.initial() => TodoFormState(

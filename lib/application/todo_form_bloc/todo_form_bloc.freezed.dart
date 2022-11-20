@@ -477,7 +477,7 @@ mixin _$TodoFormState {
   bool get isSaving => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
-  Option<Either<String, List<Todo>>> get saveErrorMessageOrUpdatedTodosOption =>
+  Option<Either<String, Unit>> get saveErrorMessageOrUpdatedTodosOption =>
       throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -497,7 +497,7 @@ abstract class $TodoFormStateCopyWith<$Res> {
       bool isSaving,
       String title,
       String description,
-      Option<Either<String, List<Todo>>> saveErrorMessageOrUpdatedTodosOption});
+      Option<Either<String, Unit>> saveErrorMessageOrUpdatedTodosOption});
 }
 
 /// @nodoc
@@ -545,7 +545,7 @@ class _$TodoFormStateCopyWithImpl<$Res, $Val extends TodoFormState>
               saveErrorMessageOrUpdatedTodosOption
           ? _value.saveErrorMessageOrUpdatedTodosOption
           : saveErrorMessageOrUpdatedTodosOption // ignore: cast_nullable_to_non_nullable
-              as Option<Either<String, List<Todo>>>,
+              as Option<Either<String, Unit>>,
     ) as $Val);
   }
 }
@@ -564,7 +564,7 @@ abstract class _$$_TodoFormStateCopyWith<$Res>
       bool isSaving,
       String title,
       String description,
-      Option<Either<String, List<Todo>>> saveErrorMessageOrUpdatedTodosOption});
+      Option<Either<String, Unit>> saveErrorMessageOrUpdatedTodosOption});
 }
 
 /// @nodoc
@@ -610,7 +610,7 @@ class __$$_TodoFormStateCopyWithImpl<$Res>
               saveErrorMessageOrUpdatedTodosOption
           ? _value.saveErrorMessageOrUpdatedTodosOption
           : saveErrorMessageOrUpdatedTodosOption // ignore: cast_nullable_to_non_nullable
-              as Option<Either<String, List<Todo>>>,
+              as Option<Either<String, Unit>>,
     ));
   }
 }
@@ -637,7 +637,7 @@ class _$_TodoFormState implements _TodoFormState {
   @override
   final String description;
   @override
-  final Option<Either<String, List<Todo>>> saveErrorMessageOrUpdatedTodosOption;
+  final Option<Either<String, Unit>> saveErrorMessageOrUpdatedTodosOption;
 
   @override
   String toString() {
@@ -682,7 +682,7 @@ abstract class _TodoFormState implements TodoFormState {
       required final bool isSaving,
       required final String title,
       required final String description,
-      required final Option<Either<String, List<Todo>>>
+      required final Option<Either<String, Unit>>
           saveErrorMessageOrUpdatedTodosOption}) = _$_TodoFormState;
 
   @override
@@ -696,7 +696,7 @@ abstract class _TodoFormState implements TodoFormState {
   @override
   String get description;
   @override
-  Option<Either<String, List<Todo>>> get saveErrorMessageOrUpdatedTodosOption;
+  Option<Either<String, Unit>> get saveErrorMessageOrUpdatedTodosOption;
   @override
   @JsonKey(ignore: true)
   _$$_TodoFormStateCopyWith<_$_TodoFormState> get copyWith =>

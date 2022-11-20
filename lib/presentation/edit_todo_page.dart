@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todos_bloc_example/application/todo_form_bloc/todo_form_bloc.dart';
-import 'package:todos_bloc_example/application/todo_reader_bloc/todo_reader_bloc.dart';
 import 'package:todos_bloc_example/infra/todo_repository.dart';
 import 'package:todos_bloc_example/l10n/l10n.dart';
 import 'package:todos_bloc_example/models/todo.dart';
@@ -36,17 +35,7 @@ class EditTodoPage extends StatelessWidget {
                     (l) => false,
                     (r) => true,
                   )),
-      listener: (context, state) {
-        state.saveErrorMessageOrUpdatedTodosOption.fold(
-            () => null,
-            (a) => a.fold(
-                  (l) => null,
-                  (r) => context
-                      .read<TodoReaderBloc>()
-                      .add(TodoReaderEvent.todoUpdated(r)),
-                ));
-        Navigator.pop(context);
-      },
+      listener: (context, state) => Navigator.pop(context),
       child: const EditTodoView(),
     );
   }

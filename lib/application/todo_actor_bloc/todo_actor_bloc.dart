@@ -18,7 +18,7 @@ class TodoActorBloc extends Bloc<TodoActorEvent, TodoActorState> {
         Todo todo = event.todo.copyWith(isCompleted: true);
         emit(const TodoActorState.actionInProgress());
         await _todoRepository.saveTodo(todo);
-        emit(TodoActorState.actionSuccess(_todoRepository.getTodos()));
+        emit(const TodoActorState.actionSuccess());
       }
     });
 
@@ -26,24 +26,24 @@ class TodoActorBloc extends Bloc<TodoActorEvent, TodoActorState> {
       emit(const TodoActorState.actionInProgress());
       await _todoRepository.deleteTodo(event.todo.id);
       lastDeleted = event.todo;
-      emit(TodoActorState.deleteSuccess(_todoRepository.getTodos()));
+      emit(const TodoActorState.deleteSuccess());
     });
     on<_UndoDeletionRequested>((event, emit) async {
       if (lastDeleted != null) {
         emit(const TodoActorState.actionInProgress());
         await _todoRepository.saveTodo(lastDeleted!);
-        emit(TodoActorState.actionSuccess(_todoRepository.getTodos()));
+        emit(const TodoActorState.actionSuccess());
       }
     });
     on<_ToggleAllRequested>((event, emit) async {
       emit(const TodoActorState.actionInProgress());
       await _todoRepository.completeAll(isCompleted: true);
-      emit(TodoActorState.actionSuccess(_todoRepository.getTodos()));
+      emit(const TodoActorState.actionSuccess());
     });
     on<_ClearCompletedRequested>((event, emit) async {
       emit(const TodoActorState.actionInProgress());
       await _todoRepository.clearCompleted();
-      emit(TodoActorState.actionSuccess(_todoRepository.getTodos()));
+      emit(const TodoActorState.actionSuccess());
     });
   }
 }

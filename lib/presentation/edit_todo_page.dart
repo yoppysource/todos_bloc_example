@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todos_bloc_example/application/edit_todo_bloc/edit_todo_bloc.dart';
-import 'package:todos_bloc_example/infra/local_storage_todos_api.dart';
+import 'package:todos_bloc_example/application/todo_form_bloc/todo_form_bloc.dart';
+import 'package:todos_bloc_example/application/todo_reader_bloc/todo_reader_bloc.dart';
+import 'package:todos_bloc_example/infra/todo_repository.dart';
 import 'package:todos_bloc_example/l10n/l10n.dart';
 import 'package:todos_bloc_example/models/todo.dart';
 
@@ -13,9 +14,9 @@ class EditTodoPage extends StatelessWidget {
   static Route<void> route({Todo? initialTodo}) {
     return MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (context) => BlocProvider<EditTodoBloc>(
-        create: (context) => EditTodoBloc(
-          todosRepository: context.read<LocalStorageTodosApi>(),
+      builder: (context) => BlocProvider(
+        create: (context) => TodoFormBloc(
+          todoRepository: context.read<TodoRepository>(),
           initialTodo: initialTodo,
         ),
         child: const EditTodoPage(),
@@ -25,11 +26,27 @@ class EditTodoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EditTodoBloc, EditTodoState>(
+    return BlocListener<TodoFormBloc, TodoFormState>(
       listenWhen: (previous, current) =>
-          previous.status != current.status &&
-          current.status == EditTodoStatus.success,
-      listener: (context, state) => Navigator.of(context).pop(),
+          previous.saveErrorMessageOrUpdatedTodosOption !=
+              current.saveErrorMessageOrUpdatedTodosOption &&
+          current.saveErrorMessageOrUpdatedTodosOption.fold(
+              () => false,
+              (a) => a.fold(
+                    (l) => false,
+                    (r) => true,
+                  )),
+      listener: (context, state) {
+        state.saveErrorMessageOrUpdatedTodosOption.fold(
+            () => null,
+            (a) => a.fold(
+                  (l) => null,
+                  (r) => context
+                      .read<TodoReaderBloc>()
+                      .add(TodoReaderEvent.todoUpdated(r)),
+                ));
+        Navigator.pop(context);
+      },
       child: const EditTodoView(),
     );
   }
@@ -41,10 +58,9 @@ class EditTodoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final status = context.select((EditTodoBloc bloc) => bloc.state.status);
-    final isNewTodo = context.select(
-      (EditTodoBloc bloc) => bloc.state.isNewTodo,
-    );
+    final isSaving = context.select((TodoFormBloc bloc) => bloc.state.isSaving);
+    final isNewTodo =
+        context.select((TodoFormBloc bloc) => bloc.state.editTodo == null);
     final theme = Theme.of(context);
     final floatingActionButtonTheme = theme.floatingActionButtonTheme;
     final fabBackgroundColor = floatingActionButtonTheme.backgroundColor ??
@@ -63,13 +79,14 @@ class EditTodoView extends StatelessWidget {
         shape: const ContinuousRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32)),
         ),
-        backgroundColor: status.isLoadingOrSuccess
-            ? fabBackgroundColor.withOpacity(0.5)
-            : fabBackgroundColor,
-        onPressed: status.isLoadingOrSuccess
+        backgroundColor:
+            isSaving ? fabBackgroundColor.withOpacity(0.5) : fabBackgroundColor,
+        onPressed: isSaving
             ? null
-            : () => context.read<EditTodoBloc>().add(const EditTodoSubmitted()),
-        child: status.isLoadingOrSuccess
+            : () => context
+                .read<TodoFormBloc>()
+                .add(const TodoFormEvent.saveRequsted()),
+        child: isSaving
             ? const CupertinoActivityIndicator()
             : const Icon(Icons.check_rounded),
       ),
@@ -93,14 +110,14 @@ class _TitleField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final state = context.watch<EditTodoBloc>().state;
-    final hintText = state.initialTodo?.title ?? '';
+    final state = context.watch<TodoFormBloc>().state;
+    final hintText = state.editTodo?.title ?? '';
 
     return TextFormField(
       key: const Key('editTodoView_title_textFormField'),
       initialValue: state.title,
       decoration: InputDecoration(
-        enabled: !state.status.isLoadingOrSuccess,
+        enabled: !state.isSaving,
         labelText: l10n.editTodoTitleLabel,
         hintText: hintText,
       ),
@@ -109,9 +126,8 @@ class _TitleField extends StatelessWidget {
         LengthLimitingTextInputFormatter(50),
         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s]')),
       ],
-      onChanged: (value) {
-        context.read<EditTodoBloc>().add(EditTodoTitleChanged(value));
-      },
+      onChanged: (value) =>
+          context.read<TodoFormBloc>().add(TodoFormEvent.titleEntered(value)),
     );
   }
 }
@@ -123,14 +139,14 @@ class _DescriptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    final state = context.watch<EditTodoBloc>().state;
-    final hintText = state.initialTodo?.description ?? '';
+    final state = context.watch<TodoFormBloc>().state;
+    final hintText = state.editTodo?.description ?? '';
 
     return TextFormField(
       key: const Key('editTodoView_description_textFormField'),
       initialValue: state.description,
       decoration: InputDecoration(
-        enabled: !state.status.isLoadingOrSuccess,
+        enabled: !state.isSaving,
         labelText: l10n.editTodoDescriptionLabel,
         hintText: hintText,
       ),
@@ -139,9 +155,9 @@ class _DescriptionField extends StatelessWidget {
       inputFormatters: [
         LengthLimitingTextInputFormatter(300),
       ],
-      onChanged: (value) {
-        context.read<EditTodoBloc>().add(EditTodoDescriptionChanged(value));
-      },
+      onChanged: (value) => context
+          .read<TodoFormBloc>()
+          .add(TodoFormEvent.descriptionEntered(value)),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todos_bloc_example/application/todos_overview_bloc/todos_overview_bloc.dart';
+import 'package:todos_bloc_example/application/todo_reader_bloc/todo_reader_bloc.dart';
 import 'package:todos_bloc_example/l10n/l10n.dart';
 import 'package:todos_bloc_example/models/todos_view_filter.dart';
 
@@ -11,8 +11,11 @@ class TodosOverviewFilterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    final activeFilter =
-        context.select((TodosOverviewBloc bloc) => bloc.state.filter);
+    final TodosViewFilter activeFilter =
+        context.select((TodoReaderBloc bloc) => bloc.state.maybeMap(
+              loadSuccess: (state) => state.filter,
+              orElse: () => TodosViewFilter.all,
+            ));
 
     return PopupMenuButton<TodosViewFilter>(
       shape: const ContinuousRectangleBorder(
@@ -20,11 +23,9 @@ class TodosOverviewFilterButton extends StatelessWidget {
       ),
       initialValue: activeFilter,
       tooltip: l10n.todosOverviewFilterTooltip,
-      onSelected: (filter) {
-        context
-            .read<TodosOverviewBloc>()
-            .add(TodosOverviewFilterChanged(filter));
-      },
+      onSelected: (filter) => context
+          .read<TodoReaderBloc>()
+          .add(TodoReaderEvent.filterChanged(filter)),
       itemBuilder: (context) {
         return [
           PopupMenuItem(

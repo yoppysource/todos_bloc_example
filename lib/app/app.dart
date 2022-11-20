@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todos_bloc_example/infra/local_storage_todos_api.dart';
+import 'package:todos_bloc_example/application/todo_actor_bloc/todo_actor_bloc.dart';
+import 'package:todos_bloc_example/application/todo_reader_bloc/todo_reader_bloc.dart';
+import 'package:todos_bloc_example/infra/todo_repository.dart';
 import 'package:todos_bloc_example/l10n/l10n.dart';
 import 'package:todos_bloc_example/presentation/home_page.dart';
 import 'package:todos_bloc_example/theme/theme.dart';
@@ -8,7 +10,7 @@ import 'package:todos_bloc_example/theme/theme.dart';
 class App extends StatelessWidget {
   const App({super.key, required this.todosRepository});
 
-  final LocalStorageTodosApi todosRepository;
+  final TodoRepository todosRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +26,25 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: FlutterTodosTheme.light,
-      darkTheme: FlutterTodosTheme.dark,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: const HomePage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<TodoActorBloc>(
+          create: (context) =>
+              TodoActorBloc(todoRepository: context.read<TodoRepository>()),
+        ),
+        BlocProvider<TodoReaderBloc>(
+          create: (context) =>
+              TodoReaderBloc(todosRepository: context.read<TodoRepository>())
+                ..add(const TodoReaderEvent.todoRequested()),
+        )
+      ],
+      child: MaterialApp(
+        theme: FlutterTodosTheme.light,
+        darkTheme: FlutterTodosTheme.dark,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const HomePage(),
+      ),
     );
   }
 }

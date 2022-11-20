@@ -5,9 +5,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:todos_bloc_example/app/app.dart';
 import 'package:todos_bloc_example/app/app_bloc_observer.dart';
-import 'package:todos_bloc_example/infra/local_storage_todos_api.dart';
+import 'package:todos_bloc_example/infra/todo_repository.dart';
 
-void bootstrap({required LocalStorageTodosApi todosApi}) {
+void bootstrap({required TodoRepository todosApi}) {
   FlutterError.onError = (details) {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };

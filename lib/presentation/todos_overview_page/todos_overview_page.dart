@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todos_bloc_example/application/todos_overview_bloc/todos_overview_bloc.dart';
+import 'package:todos_bloc_example/application/todo_actor_bloc/todo_actor_bloc.dart';
+import 'package:todos_bloc_example/application/todo_reader_bloc/todo_reader_bloc.dart';
 import 'package:todos_bloc_example/presentation/edit_todo_page.dart';
-import 'package:todos_bloc_example/infra/local_storage_todos_api.dart';
 import 'package:todos_bloc_example/l10n/l10n.dart';
 import 'package:todos_bloc_example/presentation/todos_overview_page/widgets/todo_list_tile.dart';
 import 'package:todos_bloc_example/presentation/todos_overview_page/widgets/todos_overview_filter_button.dart';
@@ -14,12 +14,7 @@ class TodosOverviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TodosOverviewBloc(
-        todosRepository: context.read<LocalStorageTodosApi>(),
-      )..add(const TodosOverviewSubscriptionRequested()),
-      child: const TodosOverviewView(),
-    );
+    return const TodosOverviewView();
   }
 }
 
@@ -40,27 +35,26 @@ class TodosOverviewView extends StatelessWidget {
       ),
       body: MultiBlocListener(
         listeners: [
-          BlocListener<TodosOverviewBloc, TodosOverviewState>(
-            listenWhen: (previous, current) =>
-                previous.status != current.status,
+          BlocListener<TodoReaderBloc, TodoReaderState>(
             listener: (context, state) {
-              if (state.status == TodosOverviewStatus.failure) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.todosOverviewErrorSnackbarText),
+              state.maybeMap(
+                  loadFailure: (state) => ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.todosOverviewErrorSnackbarText),
+                      ),
                     ),
-                  );
-              }
+                  orElse: () => null);
             },
           ),
-          BlocListener<TodosOverviewBloc, TodosOverviewState>(
-            listenWhen: (previous, current) =>
-                previous.lastDeletedTodo != current.lastDeletedTodo &&
-                current.lastDeletedTodo != null,
+          BlocListener<TodoActorBloc, TodoActorState>(
+            listenWhen: (previous, current) => current.maybeMap(
+              deleteSuccess: (_) => true,
+              orElse: () => false,
+            ),
             listener: (context, state) {
-              final deletedTodo = state.lastDeletedTodo!;
+              final deletedTodo = context.read<TodoActorBloc>().lastDeleted!;
               final messenger = ScaffoldMessenger.of(context);
               messenger
                 ..hideCurrentSnackBar()
@@ -76,8 +70,8 @@ class TodosOverviewView extends StatelessWidget {
                       onPressed: () {
                         messenger.hideCurrentSnackBar();
                         context
-                            .read<TodosOverviewBloc>()
-                            .add(const TodosOverviewUndoDeletionRequested());
+                            .read<TodoActorBloc>()
+                            .add(const TodoActorEvent.undoDeletionRequested());
                       },
                     ),
                   ),
@@ -85,52 +79,42 @@ class TodosOverviewView extends StatelessWidget {
             },
           ),
         ],
-        child: BlocBuilder<TodosOverviewBloc, TodosOverviewState>(
-          builder: (context, state) {
-            if (state.todos.isEmpty) {
-              if (state.status == TodosOverviewStatus.loading) {
-                return const Center(child: CupertinoActivityIndicator());
-              } else if (state.status != TodosOverviewStatus.success) {
-                return const SizedBox();
-              } else {
-                return Center(
-                  child: Text(
-                    l10n.todosOverviewEmptyText,
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                );
-              }
-            }
-
-            return CupertinoScrollbar(
-              child: ListView(
-                children: [
-                  for (final todo in state.filteredTodos)
-                    TodoListTile(
-                      todo: todo,
-                      onToggleCompleted: (isCompleted) {
-                        context.read<TodosOverviewBloc>().add(
-                              TodosOverviewTodoCompletionToggled(
-                                todo: todo,
-                                isCompleted: isCompleted,
-                              ),
-                            );
-                      },
-                      onDismissed: (_) {
-                        context
-                            .read<TodosOverviewBloc>()
-                            .add(TodosOverviewTodoDeleted(todo));
-                      },
-                      onTap: () {
-                        Navigator.of(context).push(
-                          EditTodoPage.route(initialTodo: todo),
-                        );
-                      },
+        child: BlocBuilder<TodoReaderBloc, TodoReaderState>(
+          builder: (context, state) => state.maybeMap(
+            loadSuccess: (state) => CupertinoScrollbar(
+              child: state.todos.isEmpty
+                  ? Center(
+                      child: Text(
+                        l10n.todosOverviewEmptyText,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    )
+                  : ListView(
+                      children: [
+                        for (final todo in state.filteredTodos)
+                          TodoListTile(
+                            todo: todo,
+                            onToggleCompleted: (isCompleted) {
+                              context
+                                  .read<TodoActorBloc>()
+                                  .add(TodoActorEvent.completionToggled(todo));
+                            },
+                            onDismissed: (_) {
+                              context
+                                  .read<TodoActorBloc>()
+                                  .add(TodoActorEvent.todoDeleted(todo));
+                            },
+                            onTap: () {
+                              Navigator.of(context).push(
+                                EditTodoPage.route(initialTodo: todo),
+                              );
+                            },
+                          ),
+                      ],
                     ),
-                ],
-              ),
-            );
-          },
+            ),
+            orElse: () => const Center(child: CupertinoActivityIndicator()),
+          ),
         ),
       ),
     );
